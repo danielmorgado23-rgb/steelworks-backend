@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Administración - Herrería Jireh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+<!-- BARRA SUPERIOR -->
+<div class="flex justify-end gap-4 p-4 bg-gray-900 rounded mb-6">
+  <button id="logoutBtn"
+    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+    Cerrar sesión
+  </button>
+</div>
+
+<h1 class="text-3xl font-bold mb-6 text-center">Panel de Cotizaciones</h1>
+
+<div class="overflow-x-auto">
+  <table class="min-w-full bg-white rounded shadow">
+    <thead class="bg-gray-900 text-white">
+      <tr>
+        <th class="p-2">Nombre</th>
+        <th class="p-2">Teléfono</th>
+        <th class="p-2">Descripción</th>
+        <th class="p-2">Material</th>
+        <th class="p-2">Estado</th>
+        <th class="p-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaCotizaciones"></tbody>
+  </table>
+</div>
+
+<script>
+/* ===== PROTECCIÓN DEL ADMIN ===== */
+if (!localStorage.getItem("admin")) {
+  window.location.href = "/login.html";
+}
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("admin");
+  window.location.href = "/login.html";
+});
+
+/* ===== CARGAR COTIZACIONES ===== */
+async function cargarCotizaciones() {
+  const res = await fetch("/api/cotizaciones");
+  const datos = await res.json();
+
+  const tabla = document.getElementById("tablaCotizaciones");
+  tabla.innerHTML = "";
+
+  datos.forEach(c => {
+    tabla.innerHTML += `
+      <tr class="border-b text-center">
+
+        <td class="p-2">
+          <input value="${c.nombre}" id="nombre-${c._id}" class="border p-1 rounded w-full">
+        </td>
+
+        <td class="p-2">
+          <input value="${c.telefono}" id="telefono-${c._id}" class="border p-1 rounded w-full">
+        </td>
+
+        <td class="p-2">
+          <input value="${c.descripcion}" id="descripcion-${c._id}" class="border p-1 rounded w-full">
+        </td>
+
+        <td class="p-2">
+          <input value="${c.materiales}" id="materiales-${c._id}" class="border p-1 rounded w-full">
+        </td>
+
+        <td class="p-2">
+          <select onchange="cambiarEstado('${c._id}', this.value)"
+            class="border rounded p-1">
+            <option ${c.estado === "pendiente" ? "selected" : ""}>pendiente</option>
+            <option ${c.estado === "aceptada" ? "selected" : ""}>aceptada</option>
+            <option ${c.estado === "cancelada" ? "selected" : ""}>cancelada</option>
+          </select>
+        </td>
+
+        <td class="p-2 flex justify-center gap-2">
+
+          <button onclick="guardarCambios('${c._id}')"
+            class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">
+            Guardar
+          </button>
+
+          <button onclick="eliminarCotizacion('${c._id}')"
+            class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">
+            Eliminar
+          </button>
+
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* ===== CAMBIAR ESTADO ===== */
+async function cambiarEstado(id, nuevoEstado) {
+  await fetch(`/api/cotizacion/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado: nuevoEstado })
+  });
+
+  alert("Estado actualizado");
+}
+async function guardarCambios(id) {
+  const nombre = document.getElementById(`nombre-${id}`).value;
+  const telefono = document.getElementById(`telefono-${id}`).value;
+  const descripcion = document.getElementById(`descripcion-${id}`).value;
+  const materiales = document.getElementById(`materiales-${id}`).value;
+
+  await fetch(`/api/cotizacion-editar/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nombre,
+      telefono,
+      descripcion,
+      materiales
+    })
+  });
+
+  alert("Cambios guardados");
+}
+
+/* ===== GUARDAR CAMBIOS ===== */
+async function guardarCambios(id) {
+  const nombre = document.getElementById(`nombre-${id}`).value;
+  const telefono = document.getElementById(`telefono-${id}`).value;
+  const descripcion = document.getElementById(`descripcion-${id}`).value;
+  const materiales = document.getElementById(`materiales-${id}`).value;
+
+  await fetch(`/api/cotizacion/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nombre,
+      telefono,
+      descripcion,
+      materiales
+    })
+  });
+
+  alert("Cambios guardados correctamente");
+  cargarCotizaciones();
+}
+
+/* ===== ELIMINAR COTIZACIÓN ===== */
+async function eliminarCotizacion(id) {
+  const confirmar = confirm("¿Seguro que deseas eliminar esta cotización?");
+  if (!confirmar) return;
+
+  const res = await fetch(`/api/cotizacion/${id}`, {
+    method: "DELETE"
+  });
+
+  if (res.ok) {
+    alert("Cotización eliminada");
+    cargarCotizaciones();
+  } else {
+    alert("Error al eliminar");
+  }
+}
+
+/* ===== INICIAL ===== */
+cargarCotizaciones();
+</script>
+
+</body>
+</html>
+
+

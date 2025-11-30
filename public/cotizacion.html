@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Cotización - Herrería Jireh</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+  <!-- NAVBAR -->
+  <header class="bg-gray-900 text-white p-6 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+
+      <h1 class="text-2xl font-bold">Solicitar Cotización</h1>
+
+      <nav>
+        <a href="SteelWorks2.html" class="px-3 hover:text-yellow-400">Inicio</a> 
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <section class="py-12">
+    <div class="container mx-auto px-6 md:w-1/2 bg-white p-8 shadow-lg rounded-2xl">
+
+      <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">
+        Formulario de Cotización
+      </h2>
+
+      <form id="formCotizacion" class="space-y-4">
+
+        <!-- Nombre -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Nombre completo</label>
+          <input type="text" name="nombre" required
+            class="w-full border p-2 rounded-lg focus:outline-none focus:ring focus:ring-yellow-400">
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Teléfono o WhatsApp</label>
+          <input type="text" name="telefono" required
+            type="tel"
+            name="telefono"
+            required
+            pattern="[0-9]{10}"
+            maxlength="10"
+            class="w-full border p-2 rounded-lg focus:outline-none focus:ring focus:ring-yellow-400"
+            placeholder="Ingrese su número (10 dígitos)">
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Descripción del trabajo</label>
+          <textarea name="descripcion" rows="4" required
+            class="w-full border p-2 rounded-lg focus:outline-none focus:ring focus:ring-yellow-400"></textarea>
+        </div>
+
+        <!-- Materiales -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Material deseado</label>
+          <select name="materiales"
+            class="w-full border p-2 rounded-lg focus:outline-none focus:ring focus:ring-yellow-400">
+            <option value="acero">Acero</option>
+            <option value="Hierro">Hierro</option>
+            <option value="aluminio">Aluminio</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+
+        <!-- Botón -->
+        <button type="submit"
+          class="w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-yellow-500 transition">
+          Enviar Cotización
+        </button>
+
+      </form>
+
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-white text-center p-6 mt-12">
+    © 2025 Herrería y Estructuras Metálicas Jireh.
+  </footer>
+
+  <!-- SCRIPT -->
+<script>
+  document.getElementById('formCotizacion').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const nombre = e.target.nombre.value;
+    const telefono = e.target.telefono.value;
+    const descripcion = e.target.descripcion.value;
+    const materiales = e.target.materiales.value;
+
+    const costo = 0;
+
+    //  NUMERO DE WHATSAPP
+    const numeroWhatsApp = "527752033197"; 
+
+    const respuesta = await fetch('http://localhost:5000/api/cotizacion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, telefono, descripcion, materiales, costo })
+    });
+
+    if (respuesta.ok) {
+
+      // Crear mensaje para WhatsApp
+      const mensaje = `*Nuevo formulario de cotización*%0A
+      *Nombre:* ${nombre}%0A
+      *Teléfono:* ${telefono}%0A
+      *Descripción:* ${descripcion}%0A
+      *Materiales:* ${materiales}%0A
+      *Fecha:* ${new Date().toLocaleDateString()}`;
+
+      const urlWhats = `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
+
+      // Abrir whatsapp
+      window.open(urlWhats, "_blank");
+
+      alert('Cotización enviada correctamente ✔');
+      e.target.reset();
+
+    } else {
+      alert('Error al enviar la cotización ');
+    }
+  });
+</script>
+<script>
+  document.querySelector('input[name="telefono"]').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+</script>
+
+
+</body>
+</html>
+
+
+
+
