@@ -16,7 +16,7 @@ const app = express();
 // ==============================
 
 app.use(cors());
-app.use(express.json()); // ✅ MEJOR QUE body-parser
+app.use(express.json()); // MEJOR QUE body-parser
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ==============================
@@ -24,8 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ==============================
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Conectado a MongoDB Atlas'))
-  .catch(err => console.error('❌ Error MongoDB:', err));
+  .then(() => console.log('Conectado a MongoDB Atlas'))
+  .catch(err => console.error('Error MongoDB:', err));
 
 // ==============================
 //  MODELOS
@@ -57,10 +57,10 @@ app.post('/api/cotizacion', async (req, res) => {
     });
 
     await nuevaCotizacion.save();
-    res.status(201).json({ message: 'Cotización guardada correctamente ✅' });
+    res.status(201).json({ message: 'Cotización guardada correctamente' });
 
   } catch (error) {
-    console.error('❌ Error al guardar:', error);
+    console.error('Error al guardar:', error);
     res.status(500).json({ message: 'Error al guardar cotización' });
   }
 });
@@ -82,7 +82,7 @@ app.put('/api/cotizacion/:id', async (req, res) => {
       estado: req.body.estado
     });
 
-    res.json({ message: "Estado actualizado ✅" });
+    res.json({ message: "Estado actualizado" });
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar" });
   }
@@ -98,7 +98,7 @@ app.put('/api/cotizacion-editar/:id', async (req, res) => {
       materiales: req.body.materiales
     });
 
-    res.json({ message: "Cotización actualizada ✅" });
+    res.json({ message: "Cotización actualizada" });
   } catch (error) {
     console.error("Error al editar:", error);
     res.status(500).json({ message: "Error al editar" });
@@ -109,7 +109,7 @@ app.put('/api/cotizacion-editar/:id', async (req, res) => {
 app.delete('/api/cotizacion/:id', async (req, res) => {
   try {
     await Cotizacion.findByIdAndDelete(req.params.id);
-    res.json({ message: "Cotización eliminada correctamente ✅" });
+    res.json({ message: "Cotización eliminada correctamente" });
   } catch (error) {
     console.error("Error al eliminar:", error);
     res.status(500).json({ message: "Error al eliminar" });
@@ -120,11 +120,11 @@ app.delete('/api/cotizacion/:id', async (req, res) => {
 //  ADMIN + LOGIN
 // ==============================
 
-// ✅ Crear admin UNA SOLA VEZ
+// Crear admin UNA SOLA VEZ
 app.get('/crear-admin', async (req, res) => {
   try {
     const existe = await Admin.findOne({ usuario: "admin" });
-    if (existe) return res.send("⚠️ El admin ya existe");
+    if (existe) return res.send("El admin ya existe");
 
     const nuevoAdmin = new Admin({
       usuario: "admin",
@@ -132,15 +132,15 @@ app.get('/crear-admin', async (req, res) => {
     });
 
     await nuevoAdmin.save();
-    res.send("✅ Admin creado correctamente");
+    res.send("Admin creado correctamente");
 
   } catch (error) {
-    console.error("❌ Error al crear admin:", error);
-    res.status(500).send("❌ Error al crear admin");
+    console.error("Error al crear admin:", error);
+    res.status(500).send("Error al crear admin");
   }
 });
 
-// ✅ Login admin
+//Login admin
 app.post('/login', async (req, res) => {
   try {
     const { usuario, password } = req.body;
@@ -151,10 +151,10 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    res.json({ message: "Login correcto ✅" });
+    res.json({ message: "Login correcto" });
 
   } catch (error) {
-    console.error("❌ Error login:", error);
+    console.error("Error login:", error);
     res.status(500).json({ message: "Error en login" });
   }
 });
@@ -174,11 +174,10 @@ app.get('/login.html', (req, res) => {
 // ==============================
 //  SERVIDOR
 // ==============================
-
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
 
