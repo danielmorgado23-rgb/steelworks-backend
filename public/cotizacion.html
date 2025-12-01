@@ -19,7 +19,7 @@
       <h1 class="text-2xl font-bold">Solicitar Cotización</h1>
 
       <nav>
-        <a href="SteelWorks2.html" class="px-3 hover:text-yellow-400">Inicio</a> 
+        <a href="index.html" class="px-3 hover:text-yellow-400">Inicio</a> 
       </nav>
 
     </div>
@@ -104,7 +104,7 @@
     //  NUMERO DE WHATSAPP
     const numeroWhatsApp = "527752033197"; 
 
-    const respuesta = await fetch('http://localhost:5000/api/cotizacion', {
+    const respuesta = await fetch('https://steelworks-backend.onrender.com/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, telefono, descripcion, materiales, costo })
