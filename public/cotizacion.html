@@ -104,7 +104,7 @@
     //  NUMERO DE WHATSAPP
     const numeroWhatsApp = "527752033197"; 
 
-    const respuesta = await fetch('https://steelworks-backend.onrender.com/login', {
+    const respuesta = await fetch('https://steelworks-backend.onrender.com/api/cotizacion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, telefono, descripcion, materiales, costo })
