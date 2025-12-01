@@ -40,7 +40,7 @@ const Admin = require('./models/Admin');
 
 // Página principal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'SteelWorks2.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Guardar cotización
